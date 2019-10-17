@@ -28,7 +28,7 @@ body, input {
     grid-row-gap: 20px
 }
 
-.box-header, .box-score, .box-topLeft, .box-topRight, .box-bottomRight, .box-bottomLeft{
+.box-clicks, .box-header, .box-score, .box-topLeft, .box-topRight, .box-bottomRight, .box-bottomLeft{
         background-color:#333;
         padding:20px;
         border-radius:10px;
