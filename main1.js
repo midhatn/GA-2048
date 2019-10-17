@@ -53,7 +53,7 @@ function pushToBoard() {
 function pushToGame() {
   for (i = 0; i < z; i++) {
     for (j = 0; j < z; j++) {
-      $("div.box-" + i + j + "").html(board[i][j])
+      $("div.box-" + i + j + "").html(board[i][j] === 0? "": board[i][j])
     }
   }
 }
