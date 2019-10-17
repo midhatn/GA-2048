@@ -1,12 +1,4 @@
-// let board= [
-//     [2,2,2,2],
-//     [2,2,2,2],
-//     [2,2,2,2],
-//     [2,2,2,2]
-// ]
 
-
-/////// creating 4x4 boxes for game
 let z = 4;
 for (let i = 0; i < z; i++) {
     for (let j = 0; j < z; j++) {
@@ -25,25 +17,17 @@ for (let i = 0; i < z; i++) {
     }
 }
 ///////random numbers generation
-// function random2 (){
-//     let rand1 = Math.floor(Math.random() * z)
-//     let rand2 = Math.floor(Math.random() * z)
+function random2 (){
+    let i = Math.floor(Math.random() * z)
+    let j = Math.floor(Math.random() * z)
 
-//     if ($("div.box-"+rand1+rand2+"").html() < 2){
-//         $("div.box-"+rand1+rand2+"").html(2)
-//     } 
-// }
-// random2()
-// random2()
-///////////// 4x4 array
-
-/////////// pushing divs into array
-$("div.box-" + 0 + 0 + "").html(2)
-$("div.box-" + 0 + 1 + "").html(2)
-$("div.box-" + 0 + 2 + "").html(2)
-$("div.box-" + 0 + 3 + "").html(2)
-// console.log(board)
-
+        if ( $("div.box-"+i+j+"").html() < 2){
+            $("div.box-"+i+j+"").html(2)
+            
+        } else {
+            random2()
+        }
+} 
 
 var board = [];
 for (var i = 0; i < z; i++) {
@@ -54,18 +38,40 @@ for (var i = 0; i < z; i++) {
 }
 
 
-function pushToBoard() {
+function pushToBoardLR() {
     for (let i = 0; i < z; i++) {
         for (let j = 0; j < z; j++) {
+            if (board[i][j] >= 0){
             board[i][j] = Number($("div.box-" + i + j + "").html())
+            }
+        }
+    }
+}
 
+function pushToBoardTD() {
+    for (let i = 0; i < z; i++) {
+        for (let j = 0; j < z; j++) {
+            if (newBoard[i][j] >= 0){
+            newBoard[i][j] = Number($("div.box-" + i + j + "").html())
+            }
         }
     }
 }
 
 
-pushToBoard()
 
+function pushToGameLR (){
+for (i = 0; i <z; i++) {
+      for (j = 0; j <z; j++) {
+        $("div.box-"+i+j+"").html(board[i][j])
+     }}}
+
+
+     function pushToGameTD (){
+        for (i = 0; i <z; i++) {
+              for (j = 0; j <z; j++) {
+                $("div.box-"+i+j+"").html(newBoard[i][j])
+             }}}
 
 function scoreboard() {
     var score = 0;
@@ -76,83 +82,146 @@ function scoreboard() {
 
         }
     }
-score = score+2
     $("div.box-score").html("Score: " + score)
 }
+// scoreboard()
 
-function filter(){
-    var filtered0 = board[0].filter(Boolean);
-      var filtered1 = board[1].filter(Boolean);
-      var filtered2 = board[2].filter(Boolean);
-      var filtered3 = board[3].filter(Boolean);
-      board = []
-    
-      board.push(filtered0);
-      board.push(filtered1);
-      board.push(filtered2);
-      board.push(filtered3);
+function slideRight(row) {
+    let arr = row.filter(val => val);
+    let missing = z - arr.length;
+    let zeros = Array(missing).fill(0);
+    arr = zeros.concat(arr);
+    return arr;
+  }
+  function slideLeft(row) {
+    let arr = row.filter(val => val);
+    let missing = z - arr.length;
+    let zeros = Array(missing).fill(0);
+    arr = arr.concat(zeros);
+    return arr;
+  }
+
+
+  function combineRight(row) {
+    for (let i = z-1; i >= 1; i--) {
+      let a = row[i];
+      let b = row[i - 1];
+      if (a == b) {
+        row[i] = a + b;
+       let score = []
+        score += row[i];
+        row[i - 1] = 0 ;
       }
+    }
+    return row;
+  }
+  function combineLeft(row) {
+    for (let i=0; i<z; i++) {
+      let a = row[i];
+      let b = row[i + 1];
+      if (a == b) {
+        row[i] = a + b;
+       let score = []
+        score += row[i];
+        row[i + 1] = 0 ;
+      }
+    }
+    return row;
+  }
+  
+  
 
-function command() {
-    random2()
-    scoreboard()
-    pushToBoard()
-}
+function operate(row) {
+    row = slide(row);
+    row = combine(row);
+    return row;
+  }
+  function operate2() {
+    pushToGameLR ()
+            random2()
+            pushToBoardLR()
+            scoreboard()
+    
+  }
 
 
-      console.log(board)
+let newBoard = [ [],[],[],[] ]
+function rotateBoard(board) {
+    
+    for (let i = 0; i < 4; i++) {
+      for (let j = 0; j < 4; j++) {
+         newBoard[i][j] = board[j][i];
+      }
+    }
+    return newBoard;
+  }
+
+  function rotateBack(newBoard) {
+    
+    for (let i = 0; i < 4; i++) {
+      for (let j = 0; j < 4; j++) {
+        board[i][j] = newBoard[j][i];
+      }
+    }
+    return board;
+  }
 $(document).ready(function () {
     $("body").keydown(function (key) {
         //left
         if (key.which == 37) {
             
-            for (i = 0; i < z; i++) {
-                for (j = 0; j < z; j++) {
-                    if ((board[i][j] == board[i][j + 1]) || (board[i][j] < 2)) {
-                        // console.log(board[i][j])
-                        // console.log(board[i][j + 1])
-                        filter()
-                        board[i][j] = board[i][j] + board[i][j + 1]
-                        filter()
-                        board[i][j + 1] = board[i][j + 2]
-                        filter()
-                        // board[i][j] = Number("")
-                        $("div.box-" + i + j + "").html(board[i][j])
-                        filter()
-                        $("div.box-" + i + (j + 1) + "").html(0)
-                        filter()
-                    }
-                    
-
-                }
+            for (i = 0; i <z; i++) {
+                board[i]=slideLeft(board[i])
+                board[i]=combineLeft(board[i])
                 
-
             }
+            operate2()
             
-            
-           
-
         }
-          filter()
-          scoreboard()
-          pushToBoard()
-          console.log(board)
+          
         
         //right
         if (key.which == 39) {
 
-
-
+            for (i = 0; i <z; i++) {
+                board[i]=slideRight(board[i])
+                board[i]=combineRight(board[i])
+                
+            }
+            operate2()
+            
         }
+          
         //up
         if (key.which == 38) {
-
-
+            
+            rotateBoard(board)
+            for (i = 0; i <z; i++) {
+                newBoard[i]=slideLeft(newBoard[i])
+                newBoard[i]=combineLeft(newBoard[i])
+                rotateBack(newBoard)
+                
+            }
+            pushToGameLR ()
+            random2()
+            pushToBoardLR()
+            scoreboard()
         }
         //down
         if (key.which == 40) {
             
 
+            rotateBoard(board)
+            for (i = 0; i <z; i++) {
+                newBoard[i]=slideRight(newBoard[i])
+                newBoard[i]=combineRight(newBoard[i])
+                rotateBack(newBoard)
+                
+            }
+            pushToGameLR ()
+            random2()
+            pushToBoardLR()
+            scoreboard()
         }
 
     })
